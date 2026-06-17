@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
@@ -7,27 +9,37 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        public static List<Job> jobs = new List<Job>
+        private readonly JobContext _context;
+
+        public JobsController(JobContext context)
         {
-            new Job { Id = 1, Title = "Software Engineer", Company = "Google", Location = "Bangalore", PostedDate = DateTime.Now },
-            new Job { Id = 2, Title = "Backend Engineer", Company = "ZOHO", Location = "Chennai", PostedDate = DateTime.Now },
-            new Job { Id = 3, Title = "Full Stack Engineer", Company = "Freshworks", Location = "Chennai", PostedDate = DateTime.Now }
-        };
+            _context = context;
+        }
 
         [HttpGet]
-        public IActionResult GetAllJobs()
+        public async Task<IActionResult> GetAllJobs()
         {
+            var jobs = await _context.Jobs.ToListAsync();
             return Ok(jobs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetJobsById(int id)
+        public async Task<IActionResult> GetJobsById(int id)
         {
-            var job = jobs.FirstOrDefault(j => j.Id == id);
-                        if (job == null)
+            var job = await _context.Jobs.FindAsync(id);
+            if (job == null)
             {
                 return NotFound($"Job with ID {id} not found.");
             }
             return Ok(job);
         }
-}}
+
+        [HttpPost]
+        public async Task<IActionResult> CreateJob(Job job)
+        {
+            _context.Jobs.Add(job);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetJobsById), new { id = job.Id }, job);
+        }
+    }
+}
