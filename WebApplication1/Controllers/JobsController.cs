@@ -20,14 +20,30 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllJobs()
         {
-            var jobs = await _context.Jobs.ToListAsync();
-            return Ok(jobs);
+            var job = await _context.Jobs.Select(x => new JobResponseDTO
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Company = x.Company,
+                Location = x.Location,
+                PostedDate = x.PostedDate
+            }).ToListAsync();
+
+            return Ok(job);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJobsById(int id)
         {
-            var job = await _context.Jobs.FindAsync(id);
+            var job = await _context.Jobs.Where(x => x.Id == id).Select(x => new JobResponseDTO
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Company = x.Company,
+                Location = x.Location,
+                PostedDate = x.PostedDate
+            }).FirstOrDefaultAsync();
+
             if (job == null)
             {
                 return NotFound($"Job with ID {id} not found.");

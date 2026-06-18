@@ -1,12 +1,11 @@
-﻿namespace WebApplication1.Models
+﻿namespace WebApplication1.DTO
 {
-    public class Job
+    public class JobResponseDTO
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Company { get; set; }
         public string Location { get; set; }
         public DateTime PostedDate { get; set; }
-        public string InternalNotes { get; set; }
     }
 }
