@@ -7,6 +7,5 @@
         public string Company { get; set; }
         public string Location { get; set; }
         public DateTime PostedDate { get; set; }
-        public string InternalNotes { get; set; }
     }
 }
