@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.DTO;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
@@ -35,10 +36,19 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateJob(Job job)
+        public async Task<IActionResult> CreateJob(JobDTO jobDto)
         {
+            var job = new Job
+            {
+                Title = jobDto.Title,
+                Company = jobDto.Company,
+                Location = jobDto.Location,
+                PostedDate = jobDto.PostedDate
+            };
+
             _context.Jobs.Add(job);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetJobsById), new { id = job.Id }, job);
         }
 
