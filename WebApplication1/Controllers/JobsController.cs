@@ -18,23 +18,34 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllJobs()
+        public async Task<IActionResult> GetAllJobs([FromQuery] string? title, [FromQuery] string? location)
         {
-            var job = await _context.Jobs.Select(x => new JobResponseDTO
+            var query = _context.Jobs.AsQueryable();
+            if (!string.IsNullOrEmpty(title))
             {
-                Id = x.Id,
-                Title = x.Title,
-                Company = x.Company,
-                Location = x.Location,
-                PostedDate = x.PostedDate
-            }).ToListAsync();
+                query = query.Where(j => j.Title.Contains(title));
+            }
+            if (!string.IsNullOrEmpty(location))
+            {
+                query = query.Where(j => j.Location.Contains(location));
+            }
 
-            return Ok(job);
+            var jobs =  await query.Select(j => new JobResponseDTO
+                            {
+                                Id = j.Id,
+                                Title = j.Title,
+                                Company = j.Company,
+                                Location = j.Location,
+                                PostedDate = j.PostedDate
+                            }).ToListAsync();
+
+            return Ok(jobs);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJobsById(int id)
         {
+            if (id == 999) throw new Exception("Test Exception for middleware");
             var job = await _context.Jobs.Where(x => x.Id == id).Select(x => new JobResponseDTO
             {
                 Id = x.Id,

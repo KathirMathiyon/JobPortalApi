@@ -20,6 +20,8 @@ if(app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<WebApplication1.Middleware.ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
