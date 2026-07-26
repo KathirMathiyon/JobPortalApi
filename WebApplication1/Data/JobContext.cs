@@ -10,5 +10,6 @@ namespace WebApplication1.Data
         }
 
         public DbSet<Job> Jobs{ get; set; }
+        public DbSet<User> Users{ get; set; }
     }
 }
