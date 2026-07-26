@@ -45,7 +45,7 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJobsById(int id)
         {
-            if (id == 999) throw new Exception("Test Exception for middleware");
+            //if (id == 999) throw new Exception("Test Exception for middleware");
             var job = await _context.Jobs.Where(x => x.Id == id).Select(x => new JobResponseDTO
             {
                 Id = x.Id,
